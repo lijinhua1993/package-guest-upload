@@ -44,13 +44,15 @@ class Upload
      */
     private function getToken()
     {
-        $response = Http::asForm()->post($this->host . '/oauth/token', [
-            'grant_type'    => 'client_credentials',
-            'client_id'     => config('guest-upload.client_id'),
-            'client_secret' => config('guest-upload.client_secret'),
-        ]);
+        return \Cache::remember('guest-upload-oauth-token', 86400 * 15, function () {
+            $response = Http::asForm()->post($this->host . '/oauth/token', [
+                'grant_type'    => 'client_credentials',
+                'client_id'     => config('guest-upload.client_id'),
+                'client_secret' => config('guest-upload.client_secret'),
+            ]);
 
-        return $response->json()['access_token'];
+            return $response->json()['access_token'];
+        });
     }
 
     /**
