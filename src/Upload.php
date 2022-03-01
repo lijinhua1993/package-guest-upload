@@ -34,7 +34,7 @@ class Upload
     public function __construct()
     {
         $this->host      = config('guest-upload.host');
-        $this->urlPrefix = rtrim($this->host, '/') . '/' . ltrim(config('guest-upload.url_prefix'), '/');
+        $this->urlPrefix = rtrim($this->host, '/') . rtrim(config('guest-upload.url_prefix'), '/') . '/';
     }
 
     /**
@@ -81,7 +81,7 @@ class Upload
      */
     public function imageUrl($path)
     {
-        return $this->urlPrefix . '/' . ltrim($path, '/');
+        return $this->urlPrefix . ltrim($path, '/');
     }
 
 }
