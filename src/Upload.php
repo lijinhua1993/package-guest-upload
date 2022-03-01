@@ -38,6 +38,22 @@ class Upload
     }
 
     /**
+     * 获取接口token
+     *
+     * @return mixed
+     */
+    private function getToken()
+    {
+        $response = Http::asForm()->post($this->host . '/oauth/token', [
+            'grant_type'    => 'client_credentials',
+            'client_id'     => config('guest-upload.client_id'),
+            'client_secret' => config('guest-upload.client_secret'),
+        ]);
+
+        return $response->json()['access_token'];
+    }
+
+    /**
      * 上传图片
      *
      * @param  string|array  $name
@@ -57,7 +73,8 @@ class Upload
             $postData['folder'] = $folder;
         }
 
-        $response = Http::attach($name, $contents)
+        $response = Http::withToken($this->getToken())
+            ->attach($name, $contents)
             ->post($url, $postData);
 
         // 在客户端或服务端错误发生时抛出异常
